@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { useLoaderData, Link, useSubmit, useNavigate, Form, redirect } from "react-router-dom";
+import { useCallback, useEffect } from "react";
+import { useLoaderData, useSubmit, useNavigate, redirect } from "react-router-dom";
 import { createNote, getIndex, deleteNote } from "../storage";
 import { useLongPress } from 'use-long-press';
 
@@ -22,8 +22,8 @@ function Notes() {
     const submit = useSubmit();
     const navigate = useNavigate();
 
-    const webapp = window.Telegram.WebApp;
     const onLongPressDelete = useCallback((_event, { context: noteId }) => {
+        const webapp = window.Telegram.WebApp;
         const deleteId = "delete";
         const popupParams = {
             message: "Delete this note?",
@@ -38,6 +38,7 @@ function Notes() {
                 },
             ]
         };
+
         webapp.showPopup(popupParams, (buttonId) => {
             if (buttonId !== deleteId) {
                 return;
@@ -46,7 +47,7 @@ function Notes() {
                 method: "delete"
             });
         });
-    }, []);
+    }, [submit]);
 
     const bind = useLongPress(onLongPressDelete,
         {
@@ -54,14 +55,15 @@ function Notes() {
         }
     );
 
-    const mainButton = webapp.MainButton;
     const onMainButton = useCallback(async () => {
-        mainButton.disable();
+        window.Telegram.MainButton.disable();
         const note = await createNote();
         navigate(`/edit/${note.id}`);
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
+        const mainButton = window.Telegram.MainButton;
+
         mainButton.setText("Create a new note");
         mainButton.show();
         mainButton.enable();
@@ -71,7 +73,7 @@ function Notes() {
             mainButton.offClick(onMainButton);
             mainButton.hide();
         };
-    }, []);
+    }, [onMainButton]);
 
 
     return (

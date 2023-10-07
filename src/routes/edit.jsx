@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useLoaderData, Form, redirect, useNavigate, useSubmit } from "react-router-dom";
-import { getIndex, getNote, updateNote } from "../storage";
+import { getNote, updateNote } from "../storage";
 
 export async function loader({ params }) {
     const { noteId } = params;
@@ -19,19 +19,19 @@ function Edit() {
     const contentRef = useRef(savedContent);
     const submit = useSubmit();
     const navigate = useNavigate();
-    const webapp = window.Telegram.WebApp;
-
-    const mainButton = webapp.MainButton;
 
     const onMainButton = useCallback(async () => {
+        const mainButton = window.Telegram.WebApp.MainButton;
+
         mainButton.disable();
         submit({ content: contentRef.current }, {
             method: "post",
         });
-    }, []);
+    }, [submit]);
 
-    const backButton = webapp.BackButton;
     const onBackButton = useCallback(() => {
+        const webapp = window.Telegram.WebApp;
+
         if (contentRef.current === savedContent) {
             navigate(-1);
             return;
@@ -58,9 +58,13 @@ function Edit() {
                 navigate(-1);
             }
         });
-    }, []);
+    }, [navigate, savedContent]);
 
     useEffect(() => {
+        const webapp = window.Telegram;
+        const mainButton = webapp.MainButton;
+        const backButton = webapp.BackButton;
+
         mainButton.setText("Save and go back");
         mainButton.onClick(onMainButton);
         mainButton.enable();
@@ -83,7 +87,7 @@ function Edit() {
 
             webapp.disableClosingConfirmation();
         };
-    }, []);
+    }, [onBackButton, onMainButton]);
 
     return (
         <Form method="post">
