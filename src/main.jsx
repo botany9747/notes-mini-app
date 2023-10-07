@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import "./index.css";
-import Notes, { action as deleteAction, loader as notesLoader } from "./routes/notes";
+import Notes, { loader as notesLoader } from "./routes/notes";
 import Edit, { action as editAction, loader as editLoader } from "./routes/edit";
 import ErrorPage from "./routes/error-page";
 
@@ -20,7 +20,6 @@ const router = createBrowserRouter([
         path: "/",
         element: <Notes />,
         loader: notesLoader,
-        action: deleteAction,
       },
       {
         path: "edit/:noteId",

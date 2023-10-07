@@ -55,7 +55,7 @@ export const updateNote = async (id, content) => {
         content: content,
     }));
     // update title in the index
-    let index = await getIndex();
+    const index = await getIndex();
     index[index.findIndex(object => object.id === id)].title = content.slice(0, 100);
     await setItem(INDEX_KEY, await compressItem(index));
 };

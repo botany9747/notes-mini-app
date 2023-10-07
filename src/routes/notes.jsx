@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from "react";
-import { useLoaderData, useSubmit, useNavigate, redirect } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { createNote, getIndex, deleteNote } from "../storage";
 import { useLongPress } from 'use-long-press';
 
@@ -11,19 +11,13 @@ export async function loader() {
     return index ? index : [];
 }
 
-export async function action({ request }) {
-    const { noteId } = Object.fromEntries(await request.formData());
-    await deleteNote(noteId);
-    return redirect("/");
-}
-
 function Notes() {
     if (!window.Telegram.WebApp.isVersionAtLeast('6.2')) {
         throw new Error("Unsupported version of Telegram Bot API");
     }
 
-    const notes = useLoaderData();
-    const submit = useSubmit();
+    const savedNotes = useLoaderData();
+    const [notes, setNotes] = useState(savedNotes);
     const navigate = useNavigate();
 
     const onLongPressDelete = useCallback((_event, { context: noteId }) => {
@@ -45,15 +39,14 @@ function Notes() {
             ]
         };
 
-        webapp.showPopup(popupParams, (buttonId) => {
+        webapp.showPopup(popupParams, async (buttonId) => {
             if (buttonId !== deleteId) {
                 return;
             }
-            submit({ noteId }, {
-                method: "delete"
-            });
+            setNotes([...notes.filter((note) => note.id != noteId)]);
+            await deleteNote(noteId);
         });
-    }, [submit]);
+    }, [notes]);
 
     const bind = useLongPress(onLongPressDelete,
         {

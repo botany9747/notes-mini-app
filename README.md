@@ -69,7 +69,7 @@ Here you can also find actions and loaders:
 This component is responsible for showing user a list of notes.
 
 - create a loader that will fetch an index of all the notes
-- create an action that will be used to delete notes on DELETE submit
+- create a callback that will delete a note
 - setup telegram's MainButton to create a new note and redirect us to edit it
 - setup a callback on the long press that uses the action above with a confirmation PopUp from Telegram
 
