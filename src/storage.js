@@ -1,24 +1,24 @@
 import { compressItem, decompressItem } from "./compress";
 
 /*
+    For data-usage optimization we separate the title of the note from it's content and gzip all values.
+
     Contents of the storage
     <KEY>: <VALUE> (values are gzipped then encoded with base64)
 
     INDEX_KEY: [
         {
-            id: uuid1,
-            title: "Note 1",
+            id: <random uuid>
+            title: <first 100 characters of the note>
         },
-        {
-            id: uuid2,
-            title: "Note 2",
-        }
+        ...
     ]
-    uuid1: "This is my first note"
-    uuid2: "This is my second note"
+
+    <some-uuid>: {
+        content: <text of the note>
+    }
 */
 const INDEX_KEY = "0be28740-fc01-4947-9b2c-c33cc005428e";
-
 export const getIndex = () => {
     return getItemDecompressed(INDEX_KEY);
 };
@@ -35,31 +35,37 @@ export const createNote = async () => {
     };
     const note = {
         content: "",
-        ...indexEntry
     };
 
+    // update the index
     const index = await getIndex();
     const newIndex = index ? [indexEntry, ...index] : [indexEntry];
     await setItem(INDEX_KEY, await compressItem(newIndex));
+
+    // create the object
     await setItem(id, await compressItem(note));
     return note;
 };
 
 export const updateNote = async (id, content) => {
     const note = await getNote(id);
+    // update the note itself
     await setItem(id, await compressItem({
         ...note,
         content: content,
     }));
+    // update title in the index
     let index = await getIndex();
     index[index.findIndex(object => object.id === id)].title = content.slice(0, 100);
     await setItem(INDEX_KEY, await compressItem(index));
 };
 
 export const deleteNote = async (id) => {
+    // delete from index
     const index = await getIndex();
     index.splice(index.findIndex(note => note.id === id), 1);
     await setItem(INDEX_KEY, await compressItem(index));
+    // delete the note itself
     await removeItem(id);
 };
 

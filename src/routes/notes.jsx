@@ -51,6 +51,7 @@ function Notes() {
 
     const bind = useLongPress(onLongPressDelete,
         {
+            // this is called when user releases the button before it is considered a longpress
             onCancel: (_event, { context: noteId }) => navigate(`/edit/${noteId}`)
         }
     );
