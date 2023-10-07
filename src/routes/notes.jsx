@@ -28,6 +28,8 @@ function Notes() {
 
     const onLongPressDelete = useCallback((_event, { context: noteId }) => {
         const webapp = window.Telegram.WebApp;
+        webapp.HapticFeedback.impactOccurred("medium");
+
         const deleteId = "delete";
         const popupParams = {
             message: "Delete this note?",

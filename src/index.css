@@ -42,6 +42,7 @@
     color: var(--tg-theme-hint-color);
     text-align: center;
     font-style: italic;
+    user-select: none;
 }
 
 .edit-area {
