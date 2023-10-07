@@ -21,7 +21,7 @@
     background-color: var(--tg-theme-bg-color);
     padding: 23px 12px;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .create-new-note {
@@ -35,6 +35,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    user-select: none;
 }
 
 #note-card-empty {
@@ -62,5 +63,5 @@
 }
 
 .edit-area:focus {
-    border-color: #212121;
+    border-color: var(--tg-theme-secondary-bg-color);
 }

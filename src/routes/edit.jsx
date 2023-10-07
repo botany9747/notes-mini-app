@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLoaderData, Form, redirect, useNavigate, useSubmit } from "react-router-dom";
 import { getIndex, getNote, updateNote } from "../storage";
 
@@ -16,46 +16,27 @@ export async function action({ request, params }) {
 
 function Edit() {
     const { content: savedContent } = useLoaderData();
-    const [content, setContent] = useState(savedContent);
+    const contentRef = useRef(savedContent);
     const submit = useSubmit();
     const navigate = useNavigate();
-
     const webapp = window.Telegram.WebApp;
-    const backButton = webapp.BackButton;
+
     const mainButton = webapp.MainButton;
-
-    useEffect(() => {
-        mainButton.setText("Save and go back");
-        mainButton.show();
-        backButton.show();
-
-        webapp.expand();
-        webapp.enableClosingConfirmation();
-
-        webapp.ready();
-
-        return () => {
-            mainButton.hide();
-            backButton.hide();
-
-            webapp.disableClosingConfirmation();
-        };
-    }, []);
-
     const onMainButton = async () => {
-        submit({ content: content }, {
+        mainButton.disable();
+        submit({ content: contentRef.current }, {
             method: "post",
         });
     };
 
+    const backButton = webapp.BackButton;
     const onBackButton = () => {
-        if (content === savedContent) {
+        if (contentRef.current === savedContent) {
             navigate(-1);
             return;
         }
 
         const closeId = "close";
-
         const popupParams = {
             title: "Warning",
             message: "Changes that you made may not be saved.",
@@ -79,15 +60,29 @@ function Edit() {
     };
 
     useEffect(() => {
+        mainButton.setText("Save and go back");
         mainButton.onClick(onMainButton);
+        mainButton.enable();
+        mainButton.show();
+
         backButton.onClick(onBackButton);
+        backButton.show();
+
+        webapp.expand();
+        webapp.enableClosingConfirmation();
+
+        webapp.ready();
 
         return () => {
             mainButton.offClick(onMainButton);
-            backButton.offClick(onBackButton);
-        };
-    }, [content]);
+            mainButton.hide();
 
+            backButton.offClick(onBackButton);
+            backButton.hide();
+
+            webapp.disableClosingConfirmation();
+        };
+    }, []);
 
     return (
         <Form method="post">
@@ -95,8 +90,7 @@ function Edit() {
                 defaultValue={savedContent}
                 name="content"
                 className="edit-area"
-                value={content}
-                onChange={e => setContent(e.target.value)}
+                onChange={e => contentRef.current = e.target.value}
             ></textarea>
         </Form>
     );

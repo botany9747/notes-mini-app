@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLoaderData, Link, useSubmit, useNavigate, Form, redirect } from "react-router-dom";
 import { createNote, getIndex, deleteNote } from "../storage";
 import { useLongPress } from 'use-long-press';
@@ -21,8 +21,8 @@ function Notes() {
     const notes = useLoaderData();
     const submit = useSubmit();
     const navigate = useNavigate();
-    const webapp = window.Telegram.WebApp;
 
+    const webapp = window.Telegram.WebApp;
     const onLongPressDelete = useCallback((_event, { context: noteId }) => {
         webapp.showConfirm("Press OK to delete",
             (confirm) => {
@@ -38,13 +38,17 @@ function Notes() {
 
     const mainButton = webapp.MainButton;
     const onMainButton = async () => {
+        webapp.MainButton.disable();
         const note = await createNote();
         navigate(`/edit/${note.id}`);
     };
+
     useEffect(() => {
         mainButton.setText("Create a new note");
         mainButton.show();
+        mainButton.enable();
         mainButton.onClick(onMainButton);
+
         return () => {
             mainButton.offClick(onMainButton);
             mainButton.hide();

@@ -1,4 +1,4 @@
-import { JSONtoStream, responseToJSON, b64toStream, compressStream, responseToB64, decompressStream } from "./compress";
+import { compressItem, decompressItem } from "./compress";
 
 /*
     Contents of the storage
@@ -63,14 +63,6 @@ export const deleteNote = async (id) => {
     await removeItem(id);
 };
 
-const compressItem = async (item) => {
-    return await responseToB64(await compressStream(JSONtoStream(item)));
-};
-
-const decompressItem = async (item) => {
-    return await responseToJSON(await decompressStream(b64toStream(item)));
-};
-
 const getItemDecompressed = (key) => {
     return getItem(key).then(async (item) =>
         item !== "" ? await decompressItem(item) : null
@@ -83,9 +75,8 @@ const getStorage = () => {
 };
 
 const getItem = (key) => {
-    const storage = getStorage();
-
     return new Promise((resolve, reject) => {
+        const storage = getStorage();
         try {
             storage.getItem(key, (error, item) => {
                 if (error) {
@@ -102,8 +93,8 @@ const getItem = (key) => {
 };
 
 const setItem = (key, value) => {
-    const storage = getStorage();
     return new Promise((resolve, reject) => {
+        const storage = getStorage();
         try {
             storage.setItem(key, value, (error, isStored) => {
                 if (error) {
@@ -124,8 +115,9 @@ const setItem = (key, value) => {
 };
 
 const removeItem = (key) => {
-    const storage = getStorage();
     return new Promise((resolve, reject) => {
+        const storage = getStorage();
+
         try {
             storage.removeItem(key, (error, isDeleted) => {
                 if (error) {
@@ -143,28 +135,4 @@ const removeItem = (key) => {
             return;
         }
     });
-};
-
-window.myGetIndex = getIndex;
-window.myGetNote = getNote;
-
-window.removeAllKeys = () => {
-    const storage = getStorage();
-
-    storage.getKeys((error, keys) => {
-        storage.removeItems(keys, () => console.log("Removed all keys"));
-    });
-
-};
-
-window.getAllNotes = async () => {
-    const index = await getIndex();
-
-    const promises = index.map(async ({ id }) => {
-        return await getNote(id);
-    });
-
-    for await (let val of promises) {
-        console.log(val);
-    }
 };
