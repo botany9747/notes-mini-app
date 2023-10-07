@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLoaderData, Form, redirect, useNavigate, useSubmit } from "react-router-dom";
 import { getIndex, getNote, updateNote } from "../storage";
 
@@ -22,15 +22,16 @@ function Edit() {
     const webapp = window.Telegram.WebApp;
 
     const mainButton = webapp.MainButton;
-    const onMainButton = async () => {
+
+    const onMainButton = useCallback(async () => {
         mainButton.disable();
         submit({ content: contentRef.current }, {
             method: "post",
         });
-    };
+    }, []);
 
     const backButton = webapp.BackButton;
-    const onBackButton = () => {
+    const onBackButton = useCallback(() => {
         if (contentRef.current === savedContent) {
             navigate(-1);
             return;
@@ -57,7 +58,7 @@ function Edit() {
                 navigate(-1);
             }
         });
-    };
+    }, []);
 
     useEffect(() => {
         mainButton.setText("Save and go back");

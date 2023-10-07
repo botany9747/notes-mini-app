@@ -33,15 +33,15 @@ function Notes() {
                     method: "delete"
                 });
             });
-    });
+    }, []);
     const bind = useLongPress(onLongPressDelete);
 
     const mainButton = webapp.MainButton;
-    const onMainButton = async () => {
-        webapp.MainButton.disable();
+    const onMainButton = useCallback(async () => {
+        mainButton.disable();
         const note = await createNote();
         navigate(`/edit/${note.id}`);
-    };
+    }, []);
 
     useEffect(() => {
         mainButton.setText("Create a new note");
