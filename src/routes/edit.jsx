@@ -15,6 +15,10 @@ export async function action({ request, params }) {
 }
 
 function Edit() {
+    if (!window.Telegram.WebApp.isVersionAtLeast('6.2')) {
+        throw new Error("Unsupported version of Telegram Bot API");
+    }
+
     const { content: savedContent } = useLoaderData();
     const contentRef = useRef(savedContent);
     const submit = useSubmit();
@@ -61,7 +65,7 @@ function Edit() {
     }, [navigate, savedContent]);
 
     useEffect(() => {
-        const webapp = window.Telegram;
+        const webapp = window.Telegram.WebApp;
         const mainButton = webapp.MainButton;
         const backButton = webapp.BackButton;
 

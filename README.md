@@ -64,7 +64,7 @@ This component is responsible for showing user a list of notes.
 - setup a callback on the long press that uses the action above with a confirmation PopUp from Telegram
 
 
-### Edit component in [edit.jsx](./src/routes/)
+### Edit component in [edit.jsx](./src/routes/edit.jsx)
 
 This component is responsible for showing user an edit window for the note.
 
@@ -75,4 +75,4 @@ This component is responsible for showing user an edit window for the note.
 
 ### Storage manipulation in [storage.js](./src/storage.js)
 
-Here we define a set of function that will manipulate the storage of notes.
+Here we define a set of functions that will manipulate the storage of notes.

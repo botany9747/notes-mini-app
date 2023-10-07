@@ -44,7 +44,7 @@ export const createNote = async () => {
 
     // create the object
     await setItem(id, await compressItem(note));
-    return note;
+    return id;
 };
 
 export const updateNote = async (id, content) => {
@@ -76,8 +76,13 @@ const getItemDecompressed = (key) => {
 };
 
 const getStorage = () => {
-    const cloudStorage = window?.Telegram.WebApp.CloudStorage;
-    return cloudStorage === undefined ? window.localStorage : cloudStorage;
+    const webapp = window.Telegram.WebApp;
+
+    if (!webapp.isVersionAtLeast('6.9')) {
+        return window.localStorage;
+    }
+
+    return webapp.CloudStorage;
 };
 
 const getItem = (key) => {

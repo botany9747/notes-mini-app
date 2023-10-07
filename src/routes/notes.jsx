@@ -18,6 +18,10 @@ export async function action({ request }) {
 }
 
 function Notes() {
+    if (!window.Telegram.WebApp.isVersionAtLeast('6.2')) {
+        throw new Error("Unsupported version of Telegram Bot API");
+    }
+
     const notes = useLoaderData();
     const submit = useSubmit();
     const navigate = useNavigate();
@@ -57,13 +61,13 @@ function Notes() {
     );
 
     const onMainButton = useCallback(async () => {
-        window.Telegram.MainButton.disable();
-        const note = await createNote();
-        navigate(`/edit/${note.id}`);
+        window.Telegram.WebApp.MainButton.disable();
+        const noteId = await createNote();
+        navigate(`/edit/${noteId}`);
     }, [navigate]);
 
     useEffect(() => {
-        const mainButton = window.Telegram.MainButton;
+        const mainButton = window.Telegram.WebApp.MainButton;
 
         mainButton.setText("Create a new note");
         mainButton.show();
