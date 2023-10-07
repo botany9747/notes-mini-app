@@ -40,7 +40,7 @@ function Edit() {
         const closeId = "close";
         const popupParams = {
             title: "Warning",
-            message: "Changes that you made may not be saved.",
+            message: "Changes that you made will not be saved.",
             buttons: [
                 {
                     id: closeId,

@@ -24,17 +24,35 @@ function Notes() {
 
     const webapp = window.Telegram.WebApp;
     const onLongPressDelete = useCallback((_event, { context: noteId }) => {
-        webapp.showConfirm("Press OK to delete",
-            (confirm) => {
-                if (!confirm) {
-                    return;
-                }
-                submit({ noteId }, {
-                    method: "delete"
-                });
+        const deleteId = "delete";
+        const popupParams = {
+            message: "Delete this note?",
+            buttons: [
+                {
+                    id: deleteId,
+                    type: "destructive",
+                    text: "Delete",
+                },
+                {
+                    type: "cancel",
+                },
+            ]
+        };
+        webapp.showPopup(popupParams, (buttonId) => {
+            if (buttonId !== deleteId) {
+                return;
+            }
+            submit({ noteId }, {
+                method: "delete"
             });
+        });
     }, []);
-    const bind = useLongPress(onLongPressDelete);
+
+    const bind = useLongPress(onLongPressDelete,
+        {
+            onCancel: (_event, { context: noteId }) => navigate(`/edit/${noteId}`)
+        }
+    );
 
     const mainButton = webapp.MainButton;
     const onMainButton = useCallback(async () => {
@@ -61,9 +79,9 @@ function Notes() {
             {notes.length ? (
                 <div className="note-card-list">
                     {notes.map((note) => (
-                        <Link to={`edit/${note.id}`} key={note.id} {...bind(note.id)} className="note-card-container">
+                        <div key={note.id} {...bind(note.id)} className="note-card-container">
                             <div className="note-card-title">{note.title ? note.title : "No title"}</div>
-                        </Link>
+                        </div>
                     ))}
                 </div>
             ) : (
