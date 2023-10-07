@@ -12,11 +12,20 @@ Simple single page CRUD Telegram mini app developed with React that uses Telegra
 ## Development Quickstart
 
 Just make a **public** fork of this repository and hack away.
-Your fork will be deployed to `https://<USERNAME>.github.io/notes-mini-app`
+
+Your fork will be deployed to `https://<USERNAME>.github.io/notes-mini-app` and you can set this URL as Web App URL with @BotFather
 
 *NOTE* Make sure **not** to change repository name when forking.
-
 Otherwise, update `base` in [vite.config.js](./vite.config.js) and `basename` in [main.jsx](./src/main.jsx) appropriately.
+
+## Local Development Quickstart
+
+1. install [ngrok](https://ngrok.com/)
+1. clone this repo
+1. `npm run dev` in the root directory of this repo
+This will start a local HTTP server that you will be able to use
+1. `ngrok http 5173`
+This will expose your local HTTP server to the internet and give you an HTTPS URL that you can give to @BotFather.
 
 ## Before you start
 
