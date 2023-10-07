@@ -21,11 +21,12 @@ Otherwise, update `base` in [vite.config.js](./vite.config.js) and `basename` in
 ## Local Development Quickstart
 
 1. install [ngrok](https://ngrok.com/)
-1. clone this repo
-1. `npm run dev` in the root directory of this repo
-This will start a local HTTP server that you will be able to use
-1. `ngrok http 5173`
-This will expose your local HTTP server to the internet and give you an HTTPS URL that you can give to @BotFather.
+1. clone this repo with `git clone`
+1. install the dependencies with `npm install`
+1. start the local HTTP server with `npm run dev`
+1. expose your local HTTP server to the internet with `ngrok http 5173`
+
+ngrok will give you an HTTPS URL that you can give to @BotFather. Don't forget to add `/notes-mini-app/` at the end.
 
 ## Before you start
 
