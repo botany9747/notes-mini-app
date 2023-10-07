@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useLoaderData, Form, redirect, useNavigate, useSubmit } from "react-router-dom";
+import { useLoaderData, Form, redirect, useNavigate, useSubmit, useNavigation } from "react-router-dom";
 import { getNote, updateNote } from "../storage";
+
+const webapp = window.Telegram.WebApp;
+const mainButton = webapp.MainButton;
+const backButton = webapp.BackButton;
 
 export async function loader({ params }) {
     const { noteId } = params;
@@ -15,7 +19,7 @@ export async function action({ request, params }) {
 }
 
 function Edit() {
-    if (!window.Telegram.WebApp.isVersionAtLeast('6.2')) {
+    if (!webapp.isVersionAtLeast('6.2')) {
         throw new Error("Unsupported version of Telegram Bot API");
     }
 
@@ -25,8 +29,6 @@ function Edit() {
     const navigate = useNavigate();
 
     const onMainButton = useCallback(async () => {
-        const mainButton = window.Telegram.WebApp.MainButton;
-
         mainButton.disable();
         submit({ content: contentRef.current }, {
             method: "post",
@@ -34,8 +36,6 @@ function Edit() {
     }, [submit]);
 
     const onBackButton = useCallback(() => {
-        const webapp = window.Telegram.WebApp;
-
         if (contentRef.current === savedContent) {
             navigate(-1);
             return;
@@ -65,33 +65,42 @@ function Edit() {
     }, [navigate, savedContent]);
 
     useEffect(() => {
-        const webapp = window.Telegram.WebApp;
-        const mainButton = webapp.MainButton;
-        const backButton = webapp.BackButton;
-
-        mainButton.setText("Save and go back");
         mainButton.onClick(onMainButton);
-        mainButton.enable();
-        mainButton.show();
-
         backButton.onClick(onBackButton);
-        backButton.show();
-
-        webapp.expand();
-        webapp.enableClosingConfirmation();
-
-        webapp.ready();
 
         return () => {
             mainButton.offClick(onMainButton);
-            mainButton.hide();
-
             backButton.offClick(onBackButton);
-            backButton.hide();
-
-            webapp.disableClosingConfirmation();
         };
     }, [onBackButton, onMainButton]);
+
+    useEffect(() => {
+        mainButton.enable();
+        mainButton.hideProgress();
+        mainButton.setText("Save and go back");
+        mainButton.show();
+
+        backButton.show();
+
+        webapp.enableClosingConfirmation();
+        webapp.expand();
+
+        return () => {
+            mainButton.disable();
+            backButton.hide();
+            webapp.disableClosingConfirmation();
+        };
+    }, []);
+
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        if (navigation.state === "idle") {
+            mainButton.hideProgress();
+        } else {
+            mainButton.showProgress();
+        }
+    }, [navigation]);
 
     return (
         <Form method="post">

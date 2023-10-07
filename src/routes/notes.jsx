@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, useNavigation } from "react-router-dom";
 import { createNote, getIndex, deleteNote } from "../storage";
 import { useLongPress } from 'use-long-press';
+
+const webapp = window.Telegram.WebApp;
+const mainButton = window.Telegram.WebApp.MainButton;
 
 export async function loader() {
     const index = await getIndex().catch((error) => {
@@ -12,7 +15,7 @@ export async function loader() {
 }
 
 function Notes() {
-    if (!window.Telegram.WebApp.isVersionAtLeast('6.2')) {
+    if (!webapp.isVersionAtLeast('6.2')) {
         throw new Error("Unsupported version of Telegram Bot API");
     }
 
@@ -21,7 +24,6 @@ function Notes() {
     const navigate = useNavigate();
 
     const onLongPressDelete = useCallback((_event, { context: noteId }) => {
-        const webapp = window.Telegram.WebApp;
         webapp.HapticFeedback.impactOccurred("medium");
 
         const deleteId = "delete";
@@ -56,25 +58,35 @@ function Notes() {
     );
 
     const onMainButton = useCallback(async () => {
-        window.Telegram.WebApp.MainButton.disable();
+        mainButton.showProgress();
         const noteId = await createNote();
         navigate(`/edit/${noteId}`);
     }, [navigate]);
 
     useEffect(() => {
-        const mainButton = window.Telegram.WebApp.MainButton;
-
-        mainButton.setText("Create a new note");
-        mainButton.show();
-        mainButton.enable();
         mainButton.onClick(onMainButton);
-
         return () => {
             mainButton.offClick(onMainButton);
-            mainButton.hide();
         };
     }, [onMainButton]);
 
+    useEffect(() => {
+        mainButton.setText("Create a new note");
+        mainButton.show();
+        mainButton.enable();
+
+        return () => mainButton.disable();
+    }, []);
+
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        if (navigation.state === "idle") {
+            mainButton.hideProgress();
+        } else {
+            mainButton.showProgress();
+        }
+    }, [navigation]);
 
     return (
         <>
