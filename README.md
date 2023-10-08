@@ -85,4 +85,10 @@ This component is responsible for showing user an edit window for the note.
 
 ### Storage manipulation in [storage.js](./src/storage.js)
 
-Here we define a set of functions that will manipulate the storage of notes.
+Here we define a set of functions that will manipulate the storage of notes. You can read more about the layout of the storage in the file comments.
+
+For data-usage optimization we split the note metadata from the content of the note itself.
+
+### Browser compression API in [compress.js](./src/compress.js)
+
+In a Telegram Mini App we can utilize builtin browser functionality, e.g. Browser Compression API for compressing values before we store them.

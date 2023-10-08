@@ -1,14 +1,14 @@
 import { compressItem, decompressItem } from "./compress";
 
 /*
-    For data-usage optimization we separate the title of the note from it's content and gzip all values.
+    For data-usage optimization we separate the metadata of a note from it's content.
 
     Contents of the storage
     <KEY>: <VALUE> (values are gzipped then encoded with base64)
 
     INDEX_KEY: [
         {
-            id: <random uuid>
+            id: <some-uuid>
             title: <first 100 characters of the note>
         },
         ...
@@ -19,6 +19,7 @@ import { compressItem, decompressItem } from "./compress";
     }
 */
 const INDEX_KEY = "0be28740-fc01-4947-9b2c-c33cc005428e";
+
 export const getIndex = () => {
     return getItemDecompressed(INDEX_KEY);
 };
