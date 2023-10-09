@@ -90,7 +90,7 @@ It's a principal concept in react and you can hear more about `useState` [here](
 
 #### useEffect to show Telegram's MainButton and it's throbber
 
-`useEffect` is a react hook that takes as an argument a function and an array. It works as follows: the callback will only be run once a value in the passed in array changes.
+`useEffect` is a react hook that takes as an argument a function and an array. It works as follows: the callback will only be run once a value in the array changes.
 
 ```js
 useEffect(() => {
@@ -105,7 +105,7 @@ useEffect(() => {
 1. We provide an empty array as the second argument. This means that the callback will be run only once, only when the page loads.
 2. Once the page loads, we setup and show the Mini App's MainButton
 3. Once the page unloads, we disable the button so that button can no longer be pressed.
-We could also `hide()` it here to clean it up, however if your next page also shows MainButton (as in our case with `Edit`) the the button may blink (it will hide and then be shown again).
+We could also `hide()` it here to clean it up, however if your next page also shows MainButton (as in our case with `Edit`) then the button may blink (it will hide and then be shown again).
 
 ```js
 const navigation = useNavigation();
