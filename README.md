@@ -66,12 +66,74 @@ Here you can also find actions and loaders:
 
 ### Notes component in [notes.jsx](./src/routes/notes.jsx)
 
-This component is responsible for showing user a list of notes.
+This component is responsible for showing user a list of notes. Mainly we do the following here:
 
-- create a loader that will fetch an index of all the notes
+- create a loader that will fetch the index of all the notes
 - create a callback that will delete a note
 - setup telegram's MainButton to create a new note and redirect us to edit it
 - setup a callback on the long press that uses the action above with a confirmation PopUp from Telegram
+
+#### Getting data with useLoaderData
+
+`useLoaderData` runs the loader at the top of the file. It does so because we specified the loader for this route in `main.jsx`.
+
+It's only ran exactly once when this specific route loads, i.e. when you navigate to the page `/notes-mini-app/`.
+
+You can read more about loaders in the react-router-dom quickstart [here](https://reactrouter.com/en/main/start/tutorial#loading-data).
+
+#### useState to track the changes to notes
+
+We don't want to reload the page every time we make a change to the list of notes because it would take too much time and too much of our cellular data.
+`useState` gives a way to update the list of notes when it changes.
+
+It's a principal concept in react and you can hear more about `useState` [here](https://www.youtube.com/watch?v=O6P86uwfdR0).
+
+#### useEffect to show Telegram's MainButton and it's throbber
+
+`useEffect` is a react hook that takes as an argument a function and an array. It works as follows: the callback will only be run once a value in the passed in array changes.
+
+```js
+useEffect(() => {
+    mainButton.setText("Create a new note"); // 2
+    mainButton.enable();
+    mainButton.show();
+
+    return () => mainButton.disable(); // 3
+}, []); // 1
+```
+
+1. We provide an empty array as the second argument. This means that the callback will be run only once, only when the page loads.
+2. Once the page loads, we setup and show the Mini App's MainButton
+3. Once the page unloads, we disable the button so that button can no longer be pressed.
+We could also `hide()` it here to clean it up, however if your next page also shows MainButton (as in our case with `Edit`) the the button may blink (it will hide and then be shown again).
+
+```js
+const navigation = useNavigation();
+
+useEffect(() => {
+    if (navigation.state === "idle") {
+        mainButton.hideProgress();
+    } else {
+        mainButton.showProgress();
+    }
+}, [navigation]);
+```
+
+`useNavigation` is a hook from react-router-dom which gives us a way to check the current state of the web page. It will tells is it loading or not.
+
+When the page is loading we will show the throbber on the MainButton and when it fully loads we will hide it.
+
+[Here](https://youtu.be/0ZJgIjIuY7U?si=oNt53HgA-kIZKIOf)'s a helpful video explaining `useEffect` in more detail.
+[Here](https://reactrouter.com/en/main/start/tutorial#global-pending-ui)'s the note about `useNavigation` in the `react-router-dom` quickstart.
+
+
+#### useCallback and useLongPress to delete a note
+
+`useCallback` is really useful when we need to define a function inside the body of our react component but also want to save memory. It works exactly like `useEffect` in the way it changes only in reaction to the values in the second-argument-array. You can hear more about it [here](https://youtu.be/_AyFP5s69N4?si=BQe31k9npcknO3tv).
+
+`useLongPress` is a hook that is useful for detecting long presses on elements. `onCancel` defines a function that is called when user releases before a press is considered a long press. We use it as `OnClick` here, so we navigate to the next page. You can read more about `useLongPress` [here](https://minwork.gitbook.io/long-press-hook/).
+
+`useNavigate` gives us a way to navigate to different pages programmatically.
 
 
 ### Edit component in [edit.jsx](./src/routes/edit.jsx)
