@@ -2,6 +2,8 @@
 
 Simple single page CRUD Telegram mini app developed with React that uses Telegram CloudStorage for store and deploys to GitHub Pages.
 
+Implemented bot can be accessed here: https://t.me/basic_notes_bot/notes
+
 ## Use cases
 
 - Create new notes
@@ -11,7 +13,7 @@ Simple single page CRUD Telegram mini app developed with React that uses Telegra
 
 ## Development Quickstart
 
-Just make a **public** fork of this repository and hack away.
+Just make a **public** fork of this repository, enable GitHub pages with GitHub Actions (Settings -> Pages -> Source: GitHub Actions) and hack away.
 
 Your fork will be deployed to `https://<USERNAME>.github.io/notes-mini-app` and you can set this URL as Web App URL with @BotFather
 
